@@ -5,7 +5,8 @@
  * @format
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -56,11 +57,29 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 }
 
 function App(): React.JSX.Element {
+  const [message, setMessage] = useState('');
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  const API_URL = 'http://10.0.2.2:5138/test';
+
+  const fetchMessage = async () => {
+    try {
+      const response = await axios.get(API_URL);
+      // console.error(response.data);
+      setMessage(response.data);
+    } catch (error) {
+      console.error(error);
+      setMessage('Error fetching data');
+    }
+  };
+
+  useEffect(() => {
+    fetchMessage();
+  }, []);
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -76,9 +95,12 @@ function App(): React.JSX.Element {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
+          <Section title="Message">
+            From the ASP.Net Server: {message}
+          </Section>
           <Section title="Step One">
             Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
+            screen and then come back to see your edits. TestTestTest
           </Section>
           <Section title="See Your Changes">
             <ReloadInstructions />
